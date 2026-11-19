@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="light">
 <title>RMSM ARB Class 3 Sight-Reading</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23002147'/%3E%3Crect x='6' y='23' width='20' height='3' fill='%23c4a35a'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -40,19 +40,45 @@
 <button type="button" id="downloadButton" class="secondary" disabled>Download PDF</button>
 </div>
 </div>
-<p class="download-note">Generate Sight Reading picks an authorised passage at random and will not repeat the one just shown. You can also choose a passage by number. Download PDF saves that passage on one A4 page, with the passage number at the top.</p>
+<p class="download-note">Generate Sight Reading picks an authorised passage at random and will not repeat the one just shown. You can also choose a passage by number. Download PDF saves that passage on one A4 page, with the passage number and the candidate's number, rank, name, date and band at the top.</p>
 </div>
 
 <main id="main">
+
+<section class="details" aria-labelledby="detailsHeading">
+<h2 id="detailsHeading">Candidate details</h2>
+<div class="details-grid">
+<div class="field">
+<label for="candidateNumber">Number</label>
+<input id="candidateNumber" name="number" type="text" autocomplete="off" spellcheck="false">
+</div>
+<div class="field">
+<label for="candidateRank">Rank</label>
+<input id="candidateRank" name="rank" type="text" autocomplete="off" spellcheck="false">
+</div>
+<div class="field">
+<label for="candidateName">Name</label>
+<input id="candidateName" name="name" type="text" autocomplete="name">
+</div>
+<div class="field">
+<label for="candidateDate">Date</label>
+<input id="candidateDate" name="date" type="date">
+</div>
+<div class="field field-band">
+<label for="candidateBand">Band</label>
+<input id="candidateBand" name="band" type="text" autocomplete="organization">
+</div>
+</div>
+</section>
 
 <p id="error" class="error" hidden></p>
 
 <section class="block" id="score" aria-labelledby="scoreHeading">
 <h2 id="scoreHeading">Passage</h2>
 <p id="emptyState" class="empty-state">Choose an instrument, then press Generate Sight Reading.</p>
-<p id="passageTitle" class="passage-number" hidden tabindex="-1"></p>
-<p id="passageFacts" class="passage-facts" hidden></p>
-<div id="osmd" class="osmd" hidden aria-live="polite"></div>
+<p id="passageTitle" class="passage-number" hidden tabindex="-1" contenteditable="false" spellcheck="false" translate="no"></p>
+<p id="passageFacts" class="passage-facts" hidden contenteditable="false" spellcheck="false" translate="no"></p>
+<div id="osmd" class="osmd" hidden aria-live="polite" contenteditable="false" translate="no"></div>
 </section>
 
 <section class="requirements" aria-labelledby="examinerHeading">
@@ -62,7 +88,7 @@
 </summary>
 <ol>
 <li>Choose the instrument, then press Generate Sight Reading, or pick a passage by number.</li>
-<li>Record the passage number before the candidate plays. The same number is printed on the PDF.</li>
+<li>Record the passage number before the candidate plays. The same number is printed on the PDF, with the candidate's number, rank, name, date and band.</li>
 <li>The music is written pitch for that instrument, in the key and time marked, at the tempo on the score.</li>
 <li>A new draw will not repeat the passage just shown.</li>
 </ol>
@@ -79,7 +105,7 @@
 
 <p id="status" class="visually-hidden" role="status"></p>
 
-<div id="printHost" aria-hidden="true"></div>
+<div id="printHost" aria-hidden="true" contenteditable="false"></div>
 
 <noscript>
 <p class="noscript">JavaScript is turned off, so a passage cannot be opened. Turn JavaScript on, then reload this page.</p>
@@ -87,7 +113,7 @@
 
 <script src="vendor/opensheetmusicdisplay.min.js?v=1"></script>
 <script src="vendor/jspdf.umd.min.js?v=1"></script>
-<script src="pdf.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="pdf.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
