@@ -355,7 +355,71 @@ function fitLine(doc, text, slot, size) {
         doc.setLineWidth(0.5);
         doc.line(blankStart, markBaseline + 1.2, blankEnd, markBaseline + 1.2);
         doc.text(denom, denomX, markBaseline);
+
+        addExaminerFields(doc, {
+            commentsX: innerLeft,
+            commentsY: top + 8.4,
+            commentsW: innerRight - innerLeft,
+            commentsH: 28,
+            markX: blankStart,
+            markY: markBaseline - 5,
+            markW: blankW,
+            markH: 6.2
+        });
         return bottom;
+    }
+
+    function pdfHex(text) {
+        var hex = "";
+        for (var i = 0; i < text.length; i++) {
+            hex += text.charCodeAt(i).toString(16).toUpperCase().padStart(2, "0");
+        }
+        return "<" + hex + ">";
+    }
+
+    /*
+     * Acrobat runs this when the mark is typed or left. Preview and browser
+     * viewers still edit the field; they just do not all run the script.
+     * A blank is allowed. Anything else must be a number from 0 to 20.
+     */
+    function markAction() {
+        var script = 'var v=event.value;if(v==""){event.rc=true;}else if(!/^\\d{0,2}(\\.\\d?)?$/.test(v)){event.rc=false;}else if(v=="."||v.charAt(v.length-1)=="."){event.rc=true;}else{var n=Number(v);event.rc=n>=0&&n<=20;}';
+        var action = "<</S /JavaScript /JS " + pdfHex(script) + ">>";
+        return "<</K " + action + " /V " + action + ">>";
+    }
+
+    function addExaminerFields(doc, box) {
+        var comments = new doc.AcroFormTextField();
+        comments.fieldName = "Comments";
+        comments.multiline = true;
+        comments.fontName = "times";
+        comments.fontSize = 11;
+        comments.color = "#1c2430";
+        comments.x = box.commentsX;
+        comments.y = box.commentsY;
+        comments.width = box.commentsW;
+        comments.height = box.commentsH;
+        doc.addField(comments);
+
+        var mark = new doc.AcroFormTextField();
+        mark.fieldName = "Mark";
+        mark.fontName = "times";
+        mark.fontStyle = "bold";
+        mark.fontSize = 12;
+        mark.color = "#002147";
+        mark.textAlign = "center";
+        mark.maxLength = 4;
+        mark.doNotSpellCheck = true;
+        mark.x = box.markX;
+        mark.y = box.markY;
+        mark.width = box.markW;
+        mark.height = box.markH;
+        Object.defineProperty(mark, "AA", {
+            configurable: false,
+            enumerable: false,
+            get: function () { return markAction(); }
+        });
+        doc.addField(mark);
     }
 
     function buildBlob(current) {
@@ -436,8 +500,108 @@ function fitLine(doc, text, slot, size) {
                 candidate: candidate,
                 examinerTop: Math.round(examinerTop * 10) / 10
             };
-            return doc.output("blob");
+            return finishExaminerForm(doc.output("arraybuffer"));
         });
+    }
+
+    function pdfBinary(buffer) {
+        var bytes = new Uint8Array(buffer);
+        var parts = [];
+        for (var i = 0; i < bytes.length; i += 0x8000) {
+            parts.push(String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)));
+        }
+        return parts.join("");
+    }
+
+    function pdfBytes(text) {
+        var out = new Uint8Array(text.length);
+        for (var i = 0; i < text.length; i++) out[i] = text.charCodeAt(i) & 255;
+        return out;
+    }
+
+    function objectIdBefore(pdf, at) {
+        var head = pdf.lastIndexOf("obj", at);
+        var num = pdf.slice(Math.max(0, head - 12), head).match(/(\d+)\s+0\s+$/);
+        return num ? num[1] : null;
+    }
+
+    function fontObjectId(pdf, base) {
+        var at = pdf.indexOf("/BaseFont /" + base + "\n");
+        if (at < 0) at = pdf.indexOf("/BaseFont /" + base + "/");
+        if (at < 0) return null;
+        return objectIdBefore(pdf, at);
+    }
+
+    function fieldObjectId(pdf, name) {
+        var at = pdf.indexOf("/T (" + name + ")");
+        if (at < 0) return null;
+        return objectIdBefore(pdf, at);
+    }
+
+    function acroFormObjectId(pdf) {
+        var match = pdf.match(/\/AcroForm (\d+) 0 R/);
+        return match ? match[1] : null;
+    }
+
+    function objectBody(pdf, id) {
+        var match = new RegExp("(?:^|\\n)(" + id + " 0 obj\\n)").exec(pdf);
+        if (!match) return null;
+        var start = match.index + (pdf.charAt(match.index) === "\n" ? 1 : 0);
+        var end = pdf.indexOf("endobj", start);
+        if (end < 0) return null;
+        return pdf.slice(start, end + "endobj".length);
+    }
+
+    /*
+     * jsPDF omits the default appearance on text fields, so a viewer has no
+     * font to draw what the examiner types. Add /DA and the Times fonts to
+     * the form dictionary with an incremental update, leaving the notation
+     * and the candidate details as ordinary page content.
+     */
+    function finishExaminerForm(buffer) {
+        var pdf = pdfBinary(buffer);
+        var times = fontObjectId(pdf, "Times-Roman");
+        var timesBold = fontObjectId(pdf, "Times-Bold");
+        var commentsId = fieldObjectId(pdf, "Comments");
+        var markId = fieldObjectId(pdf, "Mark");
+        var formId = acroFormObjectId(pdf);
+        var startxref = pdf.match(/startxref\n(\d+)\n%%EOF\s*$/);
+        if (!times || !timesBold || !commentsId || !markId || !formId || !startxref) return new Blob([buffer], { type: "application/pdf" });
+
+        function withEntry(id, entry) {
+            var body = objectBody(pdf, id);
+            if (!body) throw new Error("The form field could not be finished.");
+            var point = body.indexOf("\n/Length ");
+            if (point < 0) point = body.lastIndexOf(">>");
+            return body.slice(0, point) + "\n" + entry + body.slice(point);
+        }
+
+        var comments = withEntry(commentsId, "/DA (/Times-Roman 11 Tf 0.110 0.141 0.188 rg)");
+        var mark = withEntry(markId, "/DA (/Times-Bold 12 Tf 0 0.129 0.278 rg)");
+        var form = withEntry(formId,
+            "/DR << /Font << /Times-Roman " + times + " 0 R /Times-Bold " + timesBold + " 0 R >> >>\n/NeedAppearances true");
+
+        var root = pdf.match(/\/Root (\d+) 0 R/);
+        var info = pdf.match(/\/Info (\d+) 0 R/g);
+        var sizes = pdf.match(/\/Size (\d+)/g);
+        var size = sizes ? sizes[sizes.length - 1].match(/(\d+)/) : null;
+        info = info ? info[info.length - 1].match(/(\d+)/) : null;
+        var prev = startxref[1];
+        var addition = "\n" + comments + "\n" + mark + "\n" + form + "\n";
+        var xrefAt = pdf.length + addition.length;
+        var offsets = {};
+        offsets[commentsId] = pdf.length + 1;
+        offsets[markId] = offsets[commentsId] + comments.length + 1;
+        offsets[formId] = offsets[markId] + mark.length + 1;
+        var ids = [commentsId, markId, formId].map(Number).sort(function (a, b) { return a - b; });
+        var xref = "xref\n";
+        ids.forEach(function (id) {
+            xref += id + " 1\n" + String(offsets[String(id)]).padStart(10, "0") + " 00000 n \n";
+        });
+        var trailer = "trailer\n<< /Size " + size[1] + " /Root " + root[1] + " 0 R /Prev " + prev;
+        if (info) trailer += " /Info " + info[1] + " 0 R";
+        trailer += " >>\nstartxref\n" + xrefAt + "\n%%EOF\n";
+        return new Blob([pdfBytes(pdf + addition + xref + trailer)], { type: "application/pdf" });
     }
 
     function saveBlob(blob, name) {
