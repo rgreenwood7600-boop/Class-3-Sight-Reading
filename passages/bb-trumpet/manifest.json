@@ -1,0 +1,402 @@
+[
+ {
+  "n": 1,
+  "file": "Bb Trumpet 01 - A minor - 2-4.musicxml",
+  "key": "A minor",
+  "time": "2/4",
+  "seed": 1,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 2,
+  "file": "Bb Trumpet 02 - G minor - 4-4.musicxml",
+  "key": "G minor",
+  "time": "4/4",
+  "seed": 1002,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 3,
+  "file": "Bb Trumpet 03 - C major - 3-4.musicxml",
+  "key": "C major",
+  "time": "3/4",
+  "seed": 2001,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 4,
+  "file": "Bb Trumpet 04 - C minor - 4-4.musicxml",
+  "key": "C minor",
+  "time": "4/4",
+  "seed": 3002,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 5,
+  "file": "Bb Trumpet 05 - Eb major - 4-4.musicxml",
+  "key": "Eb major",
+  "time": "4/4",
+  "seed": 4002,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 6,
+  "file": "Bb Trumpet 06 - C major - cut time.musicxml",
+  "key": "C major",
+  "time": "cut",
+  "seed": 5001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 7,
+  "file": "Bb Trumpet 07 - Eb major - 3-4.musicxml",
+  "key": "Eb major",
+  "time": "3/4",
+  "seed": 6001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 8,
+  "file": "Bb Trumpet 08 - Eb major - 4-4.musicxml",
+  "key": "Eb major",
+  "time": "4/4",
+  "seed": 7001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 9,
+  "file": "Bb Trumpet 09 - C minor - 3-4.musicxml",
+  "key": "C minor",
+  "time": "3/4",
+  "seed": 8004,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 10,
+  "file": "Bb Trumpet 10 - F major - 2-4.musicxml",
+  "key": "F major",
+  "time": "2/4",
+  "seed": 9001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 11,
+  "file": "Bb Trumpet 11 - B minor - 2-4.musicxml",
+  "key": "B minor",
+  "time": "2/4",
+  "seed": 10001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 12,
+  "file": "Bb Trumpet 12 - C minor - 2-4.musicxml",
+  "key": "C minor",
+  "time": "2/4",
+  "seed": 11005,
+  "tempo": "March tempo"
+ },
+ {
+  "n": 13,
+  "file": "Bb Trumpet 13 - G major - cut time.musicxml",
+  "key": "G major",
+  "time": "cut",
+  "seed": 12001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 14,
+  "file": "Bb Trumpet 14 - D major - 2-4.musicxml",
+  "key": "D major",
+  "time": "2/4",
+  "seed": 13003,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 15,
+  "file": "Bb Trumpet 15 - B minor - 4-4.musicxml",
+  "key": "B minor",
+  "time": "4/4",
+  "seed": 14001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 16,
+  "file": "Bb Trumpet 16 - D major - 4-4.musicxml",
+  "key": "D major",
+  "time": "4/4",
+  "seed": 15001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 17,
+  "file": "Bb Trumpet 17 - Bb major - 3-4.musicxml",
+  "key": "Bb major",
+  "time": "3/4",
+  "seed": 16001,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 18,
+  "file": "Bb Trumpet 18 - G major - 3-4.musicxml",
+  "key": "G major",
+  "time": "3/4",
+  "seed": 17002,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 19,
+  "file": "Bb Trumpet 19 - D major - 3-4.musicxml",
+  "key": "D major",
+  "time": "3/4",
+  "seed": 18001,
+  "tempo": "Andante"
+ },
+ {
+  "n": 20,
+  "file": "Bb Trumpet 20 - Bb major - 4-4.musicxml",
+  "key": "Bb major",
+  "time": "4/4",
+  "seed": 19001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 21,
+  "file": "Bb Trumpet 21 - C major - 4-4.musicxml",
+  "key": "C major",
+  "time": "4/4",
+  "seed": 20001,
+  "tempo": "Andante"
+ },
+ {
+  "n": 22,
+  "file": "Bb Trumpet 22 - C minor - 2-4.musicxml",
+  "key": "C minor",
+  "time": "2/4",
+  "seed": 21001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 23,
+  "file": "Bb Trumpet 23 - G major - 2-4.musicxml",
+  "key": "G major",
+  "time": "2/4",
+  "seed": 22001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 24,
+  "file": "Bb Trumpet 24 - D major - cut time.musicxml",
+  "key": "D major",
+  "time": "cut",
+  "seed": 23001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 25,
+  "file": "Bb Trumpet 25 - G minor - 3-4.musicxml",
+  "key": "G minor",
+  "time": "3/4",
+  "seed": 24001,
+  "tempo": "Andante"
+ },
+ {
+  "n": 26,
+  "file": "Bb Trumpet 26 - A minor - 3-4.musicxml",
+  "key": "A minor",
+  "time": "3/4",
+  "seed": 25001,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 27,
+  "file": "Bb Trumpet 27 - A minor - cut time.musicxml",
+  "key": "A minor",
+  "time": "cut",
+  "seed": 26001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 28,
+  "file": "Bb Trumpet 28 - Bb major - cut time.musicxml",
+  "key": "Bb major",
+  "time": "cut",
+  "seed": 27001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 29,
+  "file": "Bb Trumpet 29 - Bb major - 2-4.musicxml",
+  "key": "Bb major",
+  "time": "2/4",
+  "seed": 28001,
+  "tempo": "March tempo"
+ },
+ {
+  "n": 30,
+  "file": "Bb Trumpet 30 - Eb major - 2-4.musicxml",
+  "key": "Eb major",
+  "time": "2/4",
+  "seed": 29002,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 31,
+  "file": "Bb Trumpet 31 - F major - cut time.musicxml",
+  "key": "F major",
+  "time": "cut",
+  "seed": 30001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 32,
+  "file": "Bb Trumpet 32 - D major - 2-4.musicxml",
+  "key": "D major",
+  "time": "2/4",
+  "seed": 31001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 33,
+  "file": "Bb Trumpet 33 - B minor - cut time.musicxml",
+  "key": "B minor",
+  "time": "cut",
+  "seed": 32003,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 34,
+  "file": "Bb Trumpet 34 - F major - 4-4.musicxml",
+  "key": "F major",
+  "time": "4/4",
+  "seed": 33001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 35,
+  "file": "Bb Trumpet 35 - B minor - 3-4.musicxml",
+  "key": "B minor",
+  "time": "3/4",
+  "seed": 34002,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 36,
+  "file": "Bb Trumpet 36 - F major - 4-4.musicxml",
+  "key": "F major",
+  "time": "4/4",
+  "seed": 35003,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 37,
+  "file": "Bb Trumpet 37 - G major - 4-4.musicxml",
+  "key": "G major",
+  "time": "4/4",
+  "seed": 36001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 38,
+  "file": "Bb Trumpet 38 - F major - cut time.musicxml",
+  "key": "F major",
+  "time": "cut",
+  "seed": 37001,
+  "tempo": "Alla breve"
+ },
+ {
+  "n": 39,
+  "file": "Bb Trumpet 39 - F major - 3-4.musicxml",
+  "key": "F major",
+  "time": "3/4",
+  "seed": 38004,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 40,
+  "file": "Bb Trumpet 40 - C major - 2-4.musicxml",
+  "key": "C major",
+  "time": "2/4",
+  "seed": 39001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 41,
+  "file": "Bb Trumpet 41 - Eb major - cut time.musicxml",
+  "key": "Eb major",
+  "time": "cut",
+  "seed": 40001,
+  "tempo": "Alla breve"
+ },
+ {
+  "n": 42,
+  "file": "Bb Trumpet 42 - G minor - 2-4.musicxml",
+  "key": "G minor",
+  "time": "2/4",
+  "seed": 41004,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 43,
+  "file": "Bb Trumpet 43 - E minor - 3-4.musicxml",
+  "key": "E minor",
+  "time": "3/4",
+  "seed": 42003,
+  "tempo": "Tempo di valse"
+ },
+ {
+  "n": 44,
+  "file": "Bb Trumpet 44 - G minor - cut time.musicxml",
+  "key": "G minor",
+  "time": "cut",
+  "seed": 43001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 45,
+  "file": "Bb Trumpet 45 - B minor - 3-4.musicxml",
+  "key": "B minor",
+  "time": "3/4",
+  "seed": 44011,
+  "tempo": "Andante"
+ },
+ {
+  "n": 46,
+  "file": "Bb Trumpet 46 - E minor - 2-4.musicxml",
+  "key": "E minor",
+  "time": "2/4",
+  "seed": 45001,
+  "tempo": "Allegretto"
+ },
+ {
+  "n": 47,
+  "file": "Bb Trumpet 47 - A minor - 4-4.musicxml",
+  "key": "A minor",
+  "time": "4/4",
+  "seed": 46001,
+  "tempo": "Moderato"
+ },
+ {
+  "n": 48,
+  "file": "Bb Trumpet 48 - C minor - cut time.musicxml",
+  "key": "C minor",
+  "time": "cut",
+  "seed": 47001,
+  "tempo": "March tempo"
+ },
+ {
+  "n": 49,
+  "file": "Bb Trumpet 49 - E minor - cut time.musicxml",
+  "key": "E minor",
+  "time": "cut",
+  "seed": 48003,
+  "tempo": "March tempo"
+ },
+ {
+  "n": 50,
+  "file": "Bb Trumpet 50 - E minor - 4-4.musicxml",
+  "key": "E minor",
+  "time": "4/4",
+  "seed": 49001,
+  "tempo": "Moderato"
+ }
+]

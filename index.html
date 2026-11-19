@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Authorised Musician Class 3 (CEQ-3) sight-reading passages for the Royal Military School of Music. Choose an instrument and open a passage as notation.">
+<meta name="theme-color" content="#002147">
+<meta name="color-scheme" content="light">
+<title>RMSM ARB Class 3 Sight-Reading</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23002147'/%3E%3Crect x='6' y='23' width='20' height='3' fill='%23c4a35a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+
+<a class="skip-link" href="#score">Skip to the passage</a>
+
+<div class="sheet">
+
+<header class="sheet-header">
+<p class="eyebrow">The Royal Military School of Music</p>
+<h1>ARB Class 3 Sight-Reading</h1>
+<p class="subtitle">Brass · Woodwind · Percussion</p>
+<p class="page-link"><a href="https://rgreenwood7600-boop.github.io/CEQ-3-Scale-Generator/">Scales</a></p>
+</header>
+
+<div class="toolbar">
+<div class="controls-row">
+<div class="field">
+<label for="instrument">Instrument</label>
+<select id="instrument"></select>
+</div>
+<div class="field">
+<label for="passage">Passage number</label>
+<select id="passage" disabled>
+<option value="">Choose a number</option>
+</select>
+</div>
+<div class="actions">
+<button type="button" id="generateButton" disabled>Generate Sight Reading</button>
+<button type="button" id="downloadButton" class="secondary" disabled>Download PDF</button>
+</div>
+</div>
+<p class="download-note">Generate Sight Reading picks an authorised passage at random and will not repeat the one just shown. You can also choose a passage by number. Download PDF saves that passage on one A4 page, with the passage number at the top.</p>
+</div>
+
+<main id="main">
+
+<p id="error" class="error" hidden></p>
+
+<section class="block" id="score" aria-labelledby="scoreHeading">
+<h2 id="scoreHeading">Passage</h2>
+<p id="emptyState" class="empty-state">Choose an instrument, then press Generate Sight Reading.</p>
+<p id="passageTitle" class="passage-number" hidden tabindex="-1"></p>
+<p id="passageFacts" class="passage-facts" hidden></p>
+<div id="osmd" class="osmd" hidden aria-live="polite"></div>
+</section>
+
+<section class="requirements" aria-labelledby="examinerHeading">
+<details open>
+<summary>
+<h2 id="examinerHeading">For the examiner</h2>
+</summary>
+<ol>
+<li>Choose the instrument, then press Generate Sight Reading, or pick a passage by number.</li>
+<li>Record the passage number before the candidate plays. The same number is printed on the PDF.</li>
+<li>The music is written pitch for that instrument, in the key and time marked, at the tempo on the score.</li>
+<li>A new draw will not repeat the passage just shown.</li>
+</ol>
+</details>
+</section>
+
+</main>
+
+<footer class="sheet-footer">
+<p>RMSM ARB Class 3 Sight-Reading<br>Version 1.0</p>
+</footer>
+
+</div>
+
+<p id="status" class="visually-hidden" role="status"></p>
+
+<div id="printHost" aria-hidden="true"></div>
+
+<noscript>
+<p class="noscript">JavaScript is turned off, so a passage cannot be opened. Turn JavaScript on, then reload this page.</p>
+</noscript>
+
+<script src="vendor/opensheetmusicdisplay.min.js?v=1"></script>
+<script src="vendor/jspdf.umd.min.js?v=1"></script>
+<script src="pdf.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
