@@ -13,11 +13,11 @@ The first set is Bb Trumpet: 50 passages in `passages/bb-trumpet/`. Adding anoth
 ## Use the page
 
 1. Choose the instrument.
-2. Press **Generate Sight Reading**, or choose a passage number.
+2. Press **Generate Sight Reading**. A passage cannot be chosen by number, and the address bar does not open one.
 3. The passage number, key, time signature and tempo stay on screen with the notation. Record the number.
-4. **Download PDF** saves that same passage on one A4 page, in the browser. Nothing is sent to a server.
+4. **Download PDF** saves that same passage on one A4 page, in the browser. Nothing is sent to a server. Under the music there are lines for comments and a mark out of 20.
 
-A new draw will not repeat the passage just shown. The address bar keeps the current passage (`#bb-trumpet/12`), so a reload opens the same one.
+A new draw will not repeat the passage just shown.
 
 Open the site over HTTP. `fetch` cannot read the passages from a `file://` page.
 
@@ -58,7 +58,7 @@ The page reads `instruments.json`. Each instrument points at a manifest. No buil
 }
 ```
 
-`id` is the folder name and the hash prefix. `name` is what the page and the PDF show.
+`id` is the folder name. `name` is what the page and the PDF show.
 
 ## Bb Trumpet set
 

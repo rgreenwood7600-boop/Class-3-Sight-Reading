@@ -297,6 +297,67 @@ function fitLine(doc, text, slot, size) {
         return top + panelH + 4;
     }
 
+    /*
+     * Examiner box under the music: ruled lines for comments, then
+     * Mark: ___ / 20. Height is fixed so the notation can leave room
+     * for it on the same A4 page.
+     */
+    function examinerHeight() {
+        return 50;
+    }
+
+    function drawExaminer(doc, top, margin, pageW) {
+        var left = margin;
+        var right = pageW - margin;
+        var width = right - left;
+        var height = examinerHeight();
+        var bottom = top + height;
+        var innerLeft = left + 5;
+        var innerRight = right - 5;
+        var pt = 25.4 / 72;
+
+        doc.setFillColor(243, 246, 249);
+        doc.rect(left, top, width, height, "F");
+        doc.setFillColor(0, 33, 71);
+        doc.rect(left, top, 3.2 * pt, height, "F");
+        doc.setDrawColor(185, 151, 91);
+        doc.setLineWidth(0.4);
+        doc.line(left, bottom, right, bottom);
+
+        doc.setFont("times", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(0, 33, 71);
+        doc.text("Comments", innerLeft, top + 6.5);
+
+        var lineCount = 4;
+        var lineGap = 7;
+        var firstRule = top + 12;
+        doc.setDrawColor(180, 194, 206);
+        doc.setLineWidth(0.3);
+        for (var i = 0; i < lineCount; i++) {
+            doc.line(innerLeft, firstRule + i * lineGap, innerRight, firstRule + i * lineGap);
+        }
+
+        var markBaseline = firstRule + (lineCount - 1) * lineGap + 9;
+        doc.setFont("times", "bold");
+        doc.setFontSize(13);
+        doc.setTextColor(0, 33, 71);
+        var markLabel = "Mark:";
+        var denom = "/ 20";
+        var denomW = doc.getTextWidth(denom);
+        var denomX = innerRight - denomW;
+        var blankW = 24;
+        var blankEnd = denomX - 3;
+        var blankStart = blankEnd - blankW;
+        var markX = blankStart - 3 - doc.getTextWidth(markLabel);
+        doc.text(markLabel, markX, markBaseline);
+        doc.setDrawColor(0, 33, 71);
+        doc.setLineWidth(0.5);
+        doc.line(blankStart, markBaseline + 1.2, blankEnd, markBaseline + 1.2);
+        doc.text(denom, denomX, markBaseline);
+        return bottom;
+    }
+
     function buildBlob(current) {
         var passage = current.passage;
         var instrumentName = current.instrument.name;
@@ -344,8 +405,10 @@ function fitLine(doc, text, slot, size) {
             y += 4;
             y = drawCandidate(doc, candidate, y, margin, pageW);
 
-            var bottom = 16;
-            var availH = pageH - bottom - y;
+            var footerBaseline = pageH - 8;
+            var musicGap = 4;
+            var boxH = examinerHeight();
+            var availH = footerBaseline - 6 - boxH - musicGap - y;
             var drawW = contentW;
             var drawH = canvas.height * (drawW / canvas.width);
             if (drawH > availH) {
@@ -354,6 +417,8 @@ function fitLine(doc, text, slot, size) {
             }
             var x = margin + (contentW - drawW) / 2;
             doc.addImage(canvas.toDataURL("image/png"), "PNG", x, y, drawW, drawH);
+            var examinerTop = y + drawH + musicGap;
+            drawExaminer(doc, examinerTop, margin, pageW);
 
             doc.setFont("times", "normal");
             doc.setFontSize(9);
@@ -368,7 +433,8 @@ function fitLine(doc, text, slot, size) {
                 drawW: Math.round(drawW * 10) / 10,
                 drawH: Math.round(drawH * 10) / 10,
                 pages: doc.getNumberOfPages(),
-                candidate: candidate
+                candidate: candidate,
+                examinerTop: Math.round(examinerTop * 10) / 10
             };
             return doc.output("blob");
         });
