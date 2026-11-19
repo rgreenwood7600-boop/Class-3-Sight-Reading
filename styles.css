@@ -194,6 +194,7 @@ button.secondary:disabled:hover {
 
 button:focus-visible,
 select:focus-visible,
+.details-grid input:focus-visible,
 .page-link a:focus-visible,
 .skip-link:focus {
     outline: 3px solid var(--focus);
@@ -215,6 +216,40 @@ h2 {
     font-size: 0.92rem;
 }
 
+.details {
+    margin: 0 0 22px;
+}
+
+.details h2 {
+    margin-bottom: 10px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+}
+
+.details-grid .field-band {
+    grid-column: 1 / -1;
+}
+
+.details-grid .field {
+    flex: none;
+    min-width: 0;
+}
+
+.details-grid input {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid #8ea0b3;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+    color: inherit;
+}
+
 .empty-state {
     margin: 18px 0;
     color: var(--muted);
@@ -234,6 +269,11 @@ h2 {
     outline: none;
 }
 
+.passage-number,
+.passage-facts {
+    -webkit-user-modify: read-only;
+}
+
 .passage-facts {
     margin: 4px 0 8px;
     color: var(--ink);
@@ -245,12 +285,28 @@ h2 {
     min-height: 4rem;
     overflow-x: auto;
     background: white;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-modify: read-only;
 }
 
 .osmd svg {
     display: block;
     max-width: 100%;
     height: auto;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.osmd svg text,
+.osmd svg tspan,
+#printHost text,
+#printHost tspan {
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-modify: read-only;
 }
 
 .error {
@@ -404,10 +460,21 @@ h2 {
     }
 }
 
+@media (max-width: 520px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-grid .field-band {
+        grid-column: auto;
+    }
+}
+
 @media (forced-colors: active) {
     .sheet,
     button,
-    select {
+    select,
+    .details-grid input {
         border: 1px solid CanvasText;
     }
 

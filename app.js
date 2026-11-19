@@ -44,6 +44,110 @@
         errorBox.textContent = message || "";
     }
 
+    function blockEdit(event) {
+        event.preventDefault();
+    }
+
+    function blockEditKeys(event) {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        var key = event.key;
+        if (key === "Tab" || key === "Escape" || key === "Shift" || key === "Control" || key === "Alt" || key === "Meta") return;
+        if (key.length === 1 || key === "Backspace" || key === "Delete" || key === "Enter") event.preventDefault();
+    }
+
+    function guardPlain(el) {
+        function restore() {
+            if (el.__writing || el.textContent === el.__authorised) return;
+            if (el.__watch) el.__watch.disconnect();
+            el.__writing = true;
+            el.textContent = el.__authorised;
+            el.__writing = false;
+            arm();
+        }
+        function arm() {
+            if (el.__watch) el.__watch.disconnect();
+            el.__watch = new MutationObserver(restore);
+            el.__watch.observe(el, { subtree: true, childList: true, characterData: true });
+        }
+        el.setAttribute("contenteditable", "false");
+        el.spellcheck = false;
+        if (!el.__guard) {
+            el.__guard = true;
+            el.addEventListener("beforeinput", blockEdit);
+            el.addEventListener("paste", blockEdit);
+            el.addEventListener("drop", blockEdit);
+            el.addEventListener("cut", blockEdit);
+            el.addEventListener("keydown", blockEditKeys);
+        }
+        arm();
+    }
+
+    function setPlain(el, text) {
+        if (el.__watch) el.__watch.disconnect();
+        el.__authorised = text;
+        el.__writing = true;
+        el.textContent = text;
+        el.__writing = false;
+        guardPlain(el);
+    }
+
+    function stampScore(root) {
+        root.setAttribute("contenteditable", "false");
+        var nodes = root.querySelectorAll("text, tspan");
+        for (var i = 0; i < nodes.length; i++) {
+            nodes[i].setAttribute("contenteditable", "false");
+            nodes[i].setAttribute("spellcheck", "false");
+            nodes[i].style.webkitUserSelect = "none";
+            nodes[i].style.userSelect = "none";
+            nodes[i].style.pointerEvents = "none";
+            nodes[i].style.webkitUserModify = "read-only";
+            nodes[i].__authorised = nodes[i].textContent;
+        }
+        root.__textCount = nodes.length;
+    }
+
+    function guardScore(root) {
+        function restore() {
+            if (root.__writing) return;
+            var nodes = root.querySelectorAll("text, tspan");
+            var structural = nodes.length !== root.__textCount;
+            var changed = false;
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].__authorised == null) structural = true;
+                else if (nodes[i].textContent !== nodes[i].__authorised) changed = true;
+            }
+            if (!structural && !changed) return;
+            if (root.__watch) root.__watch.disconnect();
+            if (structural) {
+                root.__writing = true;
+                renderCurrent();
+                root.__writing = false;
+                return;
+            }
+            root.__writing = true;
+            for (var j = 0; j < nodes.length; j++) {
+                if (nodes[j].__authorised != null) nodes[j].textContent = nodes[j].__authorised;
+            }
+            root.__writing = false;
+            arm();
+        }
+        function arm() {
+            if (root.__watch) root.__watch.disconnect();
+            root.__watch = new MutationObserver(restore);
+            root.__watch.observe(root, { subtree: true, childList: true, characterData: true });
+        }
+        if (!root.__guard) {
+            root.__guard = true;
+            root.addEventListener("beforeinput", blockEdit);
+            root.addEventListener("paste", blockEdit);
+            root.addEventListener("drop", blockEdit);
+            root.addEventListener("cut", blockEdit);
+            root.addEventListener("keydown", blockEditKeys);
+        }
+        stampScore(root);
+        arm();
+    }
+
     function lastKey() {
         return "ceq3-sight-last:" + (instrument ? instrument.id : "");
     }
@@ -159,13 +263,18 @@
         if (!width) return;
         var engine = ensureOsmd();
         engine.EngravingRules.RenderXMeasuresPerLineAkaSystem = measuresFor(width);
+        if (osmdHost.__watch) osmdHost.__watch.disconnect();
+        osmdHost.__writing = true;
         engine.render();
         renderWidth = width;
         var svg = osmdHost.querySelector("svg");
         if (svg) {
+            svg.setAttribute("contenteditable", "false");
             svg.setAttribute("role", "img");
             svg.setAttribute("aria-label", passageTitle.textContent + ", " + passageFacts.textContent);
         }
+        osmdHost.__writing = false;
+        guardScore(osmdHost);
     }
 
     async function display(passage, options) {
@@ -190,9 +299,9 @@
             passageFacts.hidden = false;
             osmdHost.hidden = false;
             emptyState.hidden = true;
-            passageTitle.textContent = "Passage " + pad(passage.n);
-            passageFacts.textContent = prettify(instrument.name) + ", written pitch · " +
-                prettify(passage.key) + " · " + timeLabel(passage.time) + " · " + passage.tempo;
+            setPlain(passageTitle, "Passage " + pad(passage.n));
+            setPlain(passageFacts, prettify(instrument.name) + ", written pitch · " +
+                prettify(passage.key) + " · " + timeLabel(passage.time) + " · " + passage.tempo);
             passageSelect.value = String(passage.n);
             remember(passage.n);
             setHash(passage.n);

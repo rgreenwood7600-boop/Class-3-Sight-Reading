@@ -58,6 +58,9 @@
             engine.render();
             var svg = inner.querySelector("svg");
             if (!svg) throw new Error("The notation did not draw.");
+            svg.setAttribute("contenteditable", "false");
+            var texts = svg.querySelectorAll("text, tspan");
+            for (var i = 0; i < texts.length; i++) texts[i].setAttribute("contenteditable", "false");
             return rasterizeSvg(svg);
         }).finally(function () {
             host.replaceChildren();
@@ -135,9 +138,169 @@
         return crop;
     }
 
+    function fieldValue(id) {
+        var field = document.getElementById(id);
+        if (!field || field.value == null) return "";
+        return String(field.value).replace(/\s+/g, " ").trim();
+    }
+
+    function formatDate(value) {
+        var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+        if (!match) return value;
+        var year = Number(match[1]);
+        var month = Number(match[2]);
+        var day = Number(match[3]);
+        var months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        if (month < 1 || month > 12) return value;
+        var parsed = new Date(Date.UTC(year, month - 1, day));
+        if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) {
+            return value;
+        }
+        return day + " " + months[month - 1] + " " + year;
+    }
+
+    function readCandidate() {
+        return {
+            number: fieldValue("candidateNumber"),
+            rank: fieldValue("candidateRank"),
+            name: fieldValue("candidateName"),
+            date: formatDate(fieldValue("candidateDate")),
+            band: fieldValue("candidateBand")
+        };
+    }
+
+    /*
+ * Standard PDF fonts draw WinAnsi, not every Unicode character. A flat
+ * or an em dash in a name would otherwise corrupt the whole line.
+ * Accents that WinAnsi includes are kept. The scales PDF drops the rest.
+ */
+function pdfSafe(value) {
+    var map = {
+        "\u2010": "-",
+        "\u2011": "-",
+        "\u2012": "-",
+        "\u2013": "\u0096",
+        "\u2014": "\u0097",
+        "\u2018": "\u0091",
+        "\u2019": "\u0092",
+        "\u201C": "\u0093",
+        "\u201D": "\u0094",
+        "\u2026": "\u0085",
+        "\u2022": "\u0095",
+        "\u20AC": "\u0080",
+        "\u266D": "b",
+        "\u266F": "#"
+    };
+    var text = String(value == null ? "" : value);
+    var out = "";
+    for (var i = 0; i < text.length; i++) {
+        var ch = text.charAt(i);
+        var code = text.charCodeAt(i);
+        if (code === 9) {
+            out += " ";
+            continue;
+        }
+        if ((code >= 32 && code <= 126) || (code >= 160 && code <= 255)) {
+            out += ch;
+            continue;
+        }
+        if (Object.prototype.hasOwnProperty.call(map, ch)) {
+            out += map[ch];
+            continue;
+        }
+        if (code < 32) continue;
+        out += "?";
+    }
+    return out;
+}
+
+function fitLine(doc, text, slot, size) {
+        var value = String(text || "");
+        if (!value) return "";
+        doc.setFontSize(size);
+        while (size > 8 && doc.getTextWidth(value) > slot) {
+            size -= 0.5;
+            doc.setFontSize(size);
+        }
+        if (doc.getTextWidth(value) <= slot) return value;
+        var clipped = value;
+        while (clipped.length > 1 && doc.getTextWidth(clipped + "...") > slot) {
+            clipped = clipped.slice(0, -1);
+        }
+        return clipped + "...";
+    }
+
+    /*
+     * Same candidate block as the scales sheet: Number, Rank and Date on
+     * the first line, Name and Band on the second. Labels stay when a
+     * value is blank. Returns the y where the notation can start.
+     */
+    function drawCandidate(doc, candidate, top, margin, pageW) {
+        var details = candidate || {};
+        var pt = 25.4 / 72;
+        var left = margin;
+        var right = pageW - margin;
+        var width = right - left;
+        var panelH = 68 * pt;
+        var labelSize = 8;
+        var valueSize = 11;
+        var innerLeft = left + 14 * pt;
+        var innerRight = right - 12 * pt;
+        var innerW = innerRight - innerLeft;
+        var label1 = top + 14 * pt;
+        var value1 = label1 + 14 * pt;
+        var label2 = value1 + 16 * pt;
+        var value2 = label2 + 14 * pt;
+
+        doc.setFillColor(243, 246, 249);
+        doc.rect(left, top, width, panelH, "F");
+        doc.setFillColor(0, 33, 71);
+        doc.rect(left, top, 3.2 * pt, panelH, "F");
+        doc.setDrawColor(185, 151, 91);
+        doc.setLineWidth(0.4);
+        doc.line(left, top + panelH, right, top + panelH);
+
+        function label(text, x, y) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(labelSize);
+            doc.setTextColor(0, 33, 71);
+            doc.text(text, x, y);
+        }
+        function value(text, x, y, slot) {
+            var raw = pdfSafe(text);
+            if (!raw || slot < 3) return;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(28, 36, 48);
+            doc.setFontSize(valueSize);
+            doc.text(fitLine(doc, raw, slot, valueSize), x, y);
+        }
+
+        var numberW = innerW * 0.28;
+        var rankW = innerW * 0.40;
+        var dateX = innerLeft + numberW + rankW;
+        label("Number", innerLeft, label1);
+        label("Rank", innerLeft + numberW, label1);
+        label("Date", dateX, label1);
+        value(details.number, innerLeft, value1, numberW - 12 * pt);
+        value(details.rank, innerLeft + numberW, value1, rankW - 12 * pt);
+        value(details.date, dateX, value1, innerRight - dateX);
+
+        var nameW = innerW * 0.48;
+        label("Name", innerLeft, label2);
+        label("Band", innerLeft + nameW, label2);
+        value(details.name, innerLeft, value2, nameW - 12 * pt);
+        value(details.band, innerLeft + nameW, value2, innerW - nameW);
+
+        return top + panelH + 4;
+    }
+
     function buildBlob(current) {
         var passage = current.passage;
         var instrumentName = current.instrument.name;
+        var candidate = readCandidate();
         return renderPrint(current.xml).then(function (canvas) {
             var JsPDF = window.jspdf.jsPDF;
             var doc = new JsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
@@ -178,7 +341,8 @@
             doc.setDrawColor(185, 151, 91);
             doc.setLineWidth(0.45);
             doc.line(margin, y + 1.3, pageW - margin, y + 1.3);
-            y += 6;
+            y += 4;
+            y = drawCandidate(doc, candidate, y, margin, pageW);
 
             var bottom = 16;
             var availH = pageH - bottom - y;
@@ -203,7 +367,8 @@
                 canvasHeight: canvas.height,
                 drawW: Math.round(drawW * 10) / 10,
                 drawH: Math.round(drawH * 10) / 10,
-                pages: doc.getNumberOfPages()
+                pages: doc.getNumberOfPages(),
+                candidate: candidate
             };
             return doc.output("blob");
         });
