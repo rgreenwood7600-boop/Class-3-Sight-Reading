@@ -1,0 +1,10 @@
+{
+  "instruments": [
+    {
+      "id": "bb-trumpet",
+      "name": "Bb Trumpet",
+      "family": "Brass",
+      "manifest": "passages/bb-trumpet/manifest.json"
+    }
+  ]
+}
