@@ -2,7 +2,6 @@
 
 (function () {
     var instrumentSelect = document.getElementById("instrument");
-    var passageSelect = document.getElementById("passage");
     var generateButton = document.getElementById("generateButton");
     var downloadButton = document.getElementById("downloadButton");
     var emptyState = document.getElementById("emptyState");
@@ -176,20 +175,13 @@
         return dir + passage.file.split("/").map(encodeURIComponent).join("/");
     }
 
-    function setHash(n) {
-        var next = "#" + instrument.id + "/" + n;
-        if (location.hash !== next) history.replaceState(null, "", next);
-    }
-
-    function parseHash() {
-        var match = /^#([a-z0-9-]+)\/(\d+)$/.exec(location.hash);
-        if (!match) return null;
-        return { id: match[1], n: Number(match[2]) };
+    function clearAddress() {
+        if (!location.hash && !location.search) return;
+        history.replaceState(null, "", location.pathname);
     }
 
     function setBusy(busy) {
         generateButton.disabled = busy || passages.length === 0;
-        passageSelect.disabled = busy || passages.length === 0;
         instrumentSelect.disabled = busy;
         downloadButton.disabled = busy || !current;
         generateButton.setAttribute("aria-busy", busy ? "true" : "false");
@@ -212,24 +204,6 @@
             });
             instrumentSelect.appendChild(group);
         });
-    }
-
-    function fillPassages() {
-        var previous = passageSelect.value;
-        passageSelect.replaceChildren();
-        var placeholder = document.createElement("option");
-        placeholder.value = "";
-        placeholder.textContent = "Choose a number";
-        passageSelect.appendChild(placeholder);
-        passages.forEach(function (passage) {
-            var option = document.createElement("option");
-            option.value = String(passage.n);
-            option.textContent = pad(passage.n) + " — " + prettify(passage.key) + ", " + timeLabel(passage.time);
-            passageSelect.appendChild(option);
-        });
-        if (passages.some(function (passage) { return String(passage.n) === previous; })) {
-            passageSelect.value = previous;
-        }
     }
 
     function findPassage(n) {
@@ -277,9 +251,8 @@
         guardScore(osmdHost);
     }
 
-    async function display(passage, options) {
+    async function display(passage) {
         var my = ++token;
-        var moveFocus = options && options.focus;
         showError("");
         setStatus("Opening passage " + pad(passage.n) + ".");
         setBusy(true);
@@ -302,15 +275,13 @@
             setPlain(passageTitle, "Passage " + pad(passage.n));
             setPlain(passageFacts, prettify(instrument.name) + ", written pitch · " +
                 prettify(passage.key) + " · " + timeLabel(passage.time) + " · " + passage.tempo);
-            passageSelect.value = String(passage.n);
             remember(passage.n);
-            setHash(passage.n);
+            clearAddress();
             await new Promise(function (resolve) { requestAnimationFrame(resolve); });
             if (my !== token) return;
             renderCurrent();
             downloadButton.disabled = false;
             setStatus(passageTitle.textContent + ". " + passageFacts.textContent);
-            if (moveFocus) passageTitle.focus();
         } catch (error) {
             if (my !== token) return;
             current = null;
@@ -349,11 +320,9 @@
             var data = await response.json();
             if (!Array.isArray(data)) throw new Error("The passage list is not in the expected form.");
             passages = data.slice().sort(function (a, b) { return a.n - b.n; });
-            fillPassages();
             setStatus(passages.length + " passages ready for " + prettify(instrument.name) + ".");
         } catch (error) {
             passages = [];
-            fillPassages();
             showError(error && error.message ? error.message : "The passage list did not load.");
         } finally {
             setBusy(false);
@@ -410,20 +379,12 @@
     }
 
     instrumentSelect.addEventListener("change", function () {
-        loadInstrument(instrumentSelect.value).then(function () {
-            var hash = parseHash();
-            if (hash && hash.id === instrument.id && findPassage(hash.n)) display(findPassage(hash.n));
-        });
-    });
-
-    passageSelect.addEventListener("change", function () {
-        var passage = findPassage(Number(passageSelect.value));
-        if (passage) display(passage, { focus: true });
+        loadInstrument(instrumentSelect.value);
     });
 
     generateButton.addEventListener("click", function () {
         if (!passages.length) return;
-        display(pickRandom(), { focus: true });
+        display(pickRandom());
     });
 
     downloadButton.addEventListener("click", function () {
@@ -450,12 +411,9 @@
         }, 150);
     });
 
-    window.addEventListener("hashchange", function () {
-        var hash = parseHash();
-        if (!hash || !instrument || hash.id !== instrument.id) return;
-        var passage = findPassage(hash.n);
-        if (passage && (!current || current.passage.n !== passage.n)) display(passage);
-    });
+    window.addEventListener("hashchange", clearAddress);
+    window.addEventListener("popstate", clearAddress);
+    clearAddress();
 
     window.CeqApp = {
         ready: ready,
@@ -478,15 +436,8 @@
         instruments = catalog.instruments || [];
         if (!instruments.length) throw new Error("No instruments are listed yet.");
         fillInstruments();
-        var hash = parseHash();
-        var initial = instruments[0].id;
-        if (hash && instruments.some(function (item) { return item.id === hash.id; })) initial = hash.id;
-        return loadInstrument(initial).then(function () {
-            if (hash && hash.id === instrument.id) {
-                var passage = findPassage(hash.n);
-                if (passage) return display(passage);
-            }
-        });
+        clearAddress();
+        return loadInstrument(instruments[0].id);
     }).catch(function (error) {
         showError(error && error.message ? error.message : "The page did not load.");
     }).finally(function () {

@@ -263,10 +263,9 @@ h2 {
     font-weight: 700;
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
-}
-
-.passage-number:focus {
-    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 .passage-number,

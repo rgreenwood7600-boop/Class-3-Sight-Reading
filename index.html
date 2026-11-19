@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="light">
 <title>RMSM ARB Class 3 Sight-Reading</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23002147'/%3E%3Crect x='6' y='23' width='20' height='3' fill='%23c4a35a'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -29,18 +29,12 @@
 <label for="instrument">Instrument</label>
 <select id="instrument"></select>
 </div>
-<div class="field">
-<label for="passage">Passage number</label>
-<select id="passage" disabled>
-<option value="">Choose a number</option>
-</select>
-</div>
 <div class="actions">
 <button type="button" id="generateButton" disabled>Generate Sight Reading</button>
 <button type="button" id="downloadButton" class="secondary" disabled>Download PDF</button>
 </div>
 </div>
-<p class="download-note">Generate Sight Reading picks an authorised passage at random and will not repeat the one just shown. You can also choose a passage by number. Download PDF saves that passage on one A4 page, with the passage number and the candidate's number, rank, name, date and band at the top.</p>
+<p class="download-note">Generate Sight Reading picks an authorised passage at random and will not repeat the one just shown. Download PDF saves that passage on one A4 page, with the passage number and the candidate's number, rank, name, date and band at the top, and lines underneath the music for comments and a mark out of 20.</p>
 </div>
 
 <main id="main">
@@ -76,7 +70,7 @@
 <section class="block" id="score" aria-labelledby="scoreHeading">
 <h2 id="scoreHeading">Passage</h2>
 <p id="emptyState" class="empty-state">Choose an instrument, then press Generate Sight Reading.</p>
-<p id="passageTitle" class="passage-number" hidden tabindex="-1" contenteditable="false" spellcheck="false" translate="no"></p>
+<p id="passageTitle" class="passage-number" hidden contenteditable="false" spellcheck="false" translate="no"></p>
 <p id="passageFacts" class="passage-facts" hidden contenteditable="false" spellcheck="false" translate="no"></p>
 <div id="osmd" class="osmd" hidden aria-live="polite" contenteditable="false" translate="no"></div>
 </section>
@@ -87,8 +81,8 @@
 <h2 id="examinerHeading">For the examiner</h2>
 </summary>
 <ol>
-<li>Choose the instrument, then press Generate Sight Reading, or pick a passage by number.</li>
-<li>Record the passage number before the candidate plays. The same number is printed on the PDF, with the candidate's number, rank, name, date and band.</li>
+<li>Choose the instrument, then press Generate Sight Reading.</li>
+<li>Record the passage number before the candidate plays. The same number is printed on the PDF, with the candidate's number, rank, name, date and band. Under the music there are lines for comments and a mark out of 20.</li>
 <li>The music is written pitch for that instrument, in the key and time marked, at the tempo on the score.</li>
 <li>A new draw will not repeat the passage just shown.</li>
 </ol>
@@ -113,7 +107,7 @@
 
 <script src="vendor/opensheetmusicdisplay.min.js?v=1"></script>
 <script src="vendor/jspdf.umd.min.js?v=1"></script>
-<script src="pdf.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="pdf.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
